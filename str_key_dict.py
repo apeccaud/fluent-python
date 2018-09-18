@@ -1,4 +1,7 @@
-class StrKeyDict(dict):
+import collections
+
+
+class StrKeyDict(collections.UserDict):
     '''
     Enhanced version of a standard dict supporting looking up values using
     either a string or int index
@@ -20,21 +23,6 @@ class StrKeyDict(dict):
             raise KeyError
         return self[str(key)]
 
-    def get(self, key, default=None):
-        '''
-        >>> d = StrKeyDict([('2', 'two'), ('4', 'four')])
-        >>> d.get(2)
-        'two'
-        >>> d.get('4')
-        'four'
-        >>> d.get('5', 'def')
-        'def'
-        '''
-        try:
-            return self[key]
-        except KeyError:
-            return default
-
     def __contains__(self, key):
         '''
         >>> d = StrKeyDict([('2', 'two'), ('4', 'four')])
@@ -47,7 +35,16 @@ class StrKeyDict(dict):
         >>> '5' in d
         False
         '''
-        return key in self.keys() or str(key) in self.keys()
+        return str(key) in self.data
+
+    def __setitem__(self, key, item):
+        '''
+        >>> d = StrKeyDict()
+        >>> d[1] = 'one'
+        >>> d.keys()
+        KeysView({'1': 'one'})
+        '''
+        self.data[str(key)] = item
 
 
 if __name__ == '__main__':
